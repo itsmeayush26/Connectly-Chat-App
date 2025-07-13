@@ -1,5 +1,10 @@
 import Message from "../models/Message.js";
 import User from "../models/User.js";
+import cloudinary from "../lib/cloudinary.js";
+import { io, userSocketMap } from "../server.js";
+
+
+
 //get all user except the logged in user 
 
 export const getUsersForSidebar = async (req, res) => {
@@ -42,7 +47,7 @@ export const getMessages=async(req,res)=>{
         })
         await Message.updateMany({senderId: selectedUserId, recieverId:myId},
             {seen:true});
-            res.json9{success:true, messages}
+            res.json({success:true, messages})
         
     } catch (error) {
         console.log(error.message);
@@ -60,5 +65,42 @@ export const markMessageAsSeen=async (req,res)=>{
     } catch (error) {
         console.log(error.message);
         res.json({ success: false, message: error.message })
+    }
+}
+
+//send message to selected user 
+
+export const sendMessage= async (req,res)=>{
+    try {
+        const {text, image}=req.body;
+        const recieverId=req.params.id;
+        const senderId=runInNewContext.user._id;
+
+        let imageUrl;
+        if(image){
+            const uploadResponse=await cloudinary.uploader.upload(image)
+            imageUrl=uploadResponse.secure_url;
+        }
+        const newMessage=await Message.create({
+            senderId,
+            recieverId,
+            text,
+            image:imageUrl
+        })
+        //emit the new message to the reciever socket -->>
+        // which help the reciever to immediately see the msg at its end without any delay 
+        const recieverSocketId =userSocketMap[recieverId];
+        if(recieverSocketId){
+            io.to(recieverSocketId).emit("newMessage", newMessage)
+        }
+
+
+        res.json({success:true, newMessage});
+
+
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message })
+        
     }
 }
