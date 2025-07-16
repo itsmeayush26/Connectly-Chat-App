@@ -20,8 +20,8 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data } = await axios.get("/api/auth/check");
       if (data.success) {
-        setAuthUser(data.userData);
-        connectSocket(data.userData);
+        setAuthUser(data.user);
+        connectSocket(data.user);
       }
     } catch (error) {
       toast.error(error.message);
@@ -93,6 +93,8 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       axios.defaults.headers.common["token"] = token;
     }
+      checkAuth();
+
   }, []);
 
   const value = {
@@ -104,5 +106,9 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateProfile,
   };
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+  <AuthContext.Provider value={value}>
+  {children}
+  </AuthContext.Provider>
+  )
 };
