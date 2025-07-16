@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import ProfilePage from "./pages/ProfilePage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";

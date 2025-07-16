@@ -15,15 +15,15 @@ export const getUsersForSidebar = async (req, res) => {
         //count no od message not seen 
 
         const unseenMessages = {}
-        const promises = filteredUsers.map(async () => {
+        const promises = filteredUsers.map(async (user) => {
             const messages = await Message.find({ senderId: user._id, recieverId: userId, seen: false })
             if (messages.length > 0) {
-                unseenMessages[user._id] = messages.length;
+                unseenMessages[User._id] = messages.length;
 
             }
         })
-        await promise.all(promises);
-        res, json({ seccess: true, users: filteredUsers, unseenMessages })
+        await Promise.all(promises);
+        res.json({ seccess: true, users: filteredUsers, unseenMessages })
     } catch (error) {
         console.log(error.message);
         res.json({ success: false, message: error.message })
@@ -74,7 +74,8 @@ export const sendMessage= async (req,res)=>{
     try {
         const {text, image}=req.body;
         const recieverId=req.params.id;
-        const senderId=runInNewContext.user._id;
+       const senderId = req.user._id;
+
 
         let imageUrl;
         if(image){
