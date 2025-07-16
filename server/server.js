@@ -4,7 +4,7 @@ import cors from "cors";
 import http from "http";
 import { connectDB } from "./lib/db.js";
 import userRouter from "./routes/userRoutes.js";
-import messageRouter from "./routes/messageroutes.js";
+import messageRouter from "./routes/messageRoutes.js";
 import { Server } from "socket.io";
 
 // create the express app and the http server
@@ -49,7 +49,7 @@ app.use("/api/messages", messageRouter);
 await connectDB();
 
 
-if (process.env.NODE_ENV !=="production"){
+if (process.env.NODE_ENV != "production"){
   const PORT = process.env.PORT || 5000;
   
   server.listen(PORT, () => console.log("server is running on PORT:" + PORT));
